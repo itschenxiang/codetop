@@ -316,7 +316,170 @@ class Solution {
 }
 ```
 
-## 
+## 912. 排序数组 - 快速排序
 ```java
+class Solution {
+    public int[] sortArray(int[] nums) {
+        quickSort(nums, 0, nums.length-1);
+        return nums;
+    }
+    private void quickSort(int[] nums, int start, int end) {
+        if(start >= end) {
+            return;
+        }
+        int p = partition(nums, start, end);
+        quickSort(nums, start, p-1);
+        quickSort(nums, p+1, end);
+    }
+    private int partition(int[] nums, int start, int end) {
+        int i = start, j = end + 1;
+        while(true) {
+            while(nums[++i]<nums[start]) {
+                if(i == end) {
+                    break;
+                }
+            }
+            while(nums[--j]>nums[start]) {
+                if(j==start) {
+                    break;
+                }
+            }
+            if(i >= j) {
+                break;
+            }
+            int tmp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = tmp;
+        }
+        int tmp = nums[start];
+        nums[start] = nums[j];
+        nums[j] = tmp;
+        return j;
+    }
+}
+```
 
+## 102. 二叉树的层序遍历
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        if(root != null) {
+            Queue<TreeNode> queue = new LinkedList<>();
+            queue.offer(root);
+            while(!queue.isEmpty()) {
+                int levelSize = queue.size();
+                List<Integer> levelValues = new ArrayList<>(levelSize);
+                for(int i=0;i<levelSize;i++) {
+                    TreeNode node = queue.poll();
+                    levelValues.add(node.val);
+                    if(node.left != null) {
+                        queue.offer(node.left);
+                    }
+                    if(node.right != null) {
+                        queue.offer(node.right);
+                    }
+                }
+                res.add(levelValues);
+            }
+        }
+        return res;
+    }
+}
+```
+
+## 5. 最长回文子串*
+```java
+class Solution {
+    public String longestPalindrome(String s) {
+        int n = s.length();
+        String ans = "";
+        boolean[][] dp = new boolean[n][n];
+        for(int i=n-1;i>=0;i--) {
+            for(int j=i;j<n;j++) {
+                if(i == j) {
+                    dp[i][j] = true;
+                } else if(s.charAt(i) == s.charAt(j)) {
+                    dp[i][j] = i+1==j ? true : dp[i+1][j-1];
+                }
+                if(dp[i][j] && j-i+1>ans.length()) {
+                    ans = s.substring(i, j+1);
+                }
+            }
+        }
+        return ans;
+    }
+}
+```
+
+## 33. 搜索旋转排序数组*
+```java
+class Solution {
+    public int search(int[] nums, int target) {
+        int lo = 0, hi = nums.length - 1;
+        while(lo <= hi) {
+            int mid = lo + (hi - lo) / 2;
+            if(nums[mid] == target) {
+                return mid;
+            } else if(nums[mid] > target) {
+                if(target<nums[lo] && nums[mid]>=nums[lo]) {
+                    lo = mid + 1;
+                } else {
+                    hi = mid - 1;
+                }
+            } else { // nums[mid] < target
+                if(target>=nums[lo] && nums[mid]<nums[lo]) {
+                    hi = mid - 1;
+                } else {
+                    lo = mid + 1;
+                }
+            }
+        }
+        return -1;
+    }
+}
+```
+
+## 236. 二叉树的最近公共祖先
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root == null) {
+            return null;
+        }
+        if(root==p || root==q) {
+            return root;
+        }
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
+        if(left!=null && right!=null) {
+            return root;
+        }
+        return left != null ? left : right;
+    }
+}
 ```
